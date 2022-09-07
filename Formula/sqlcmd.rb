@@ -8,38 +8,7 @@ class Sqlcmd < Formula
 
   depends_on "go" => :build
 
-  def check_eula_acceptance?
-    if ENV["ACCEPT_EULA"] != "y" && ENV["ACCEPT_EULA"] != "Y"
-      puts "The license terms for this product can be downloaded from"
-      puts "https://github.com/microsoft/go-sqlcmd/blob/main/LICENSE."
-      puts "By entering 'YES', you indicate that you accept the license terms."
-      puts ""
-      loop do
-        puts "Do you accept the license terms? (Enter YES or NO)"
-        accept_eula = $stdin.gets.chomp
-        if accept_eula
-          break if accept_eula.casecmp("YES").zero?
-
-          if accept_eula.casecmp("NO").zero?
-            puts "Installation terminated: License terms not accepted."
-            return false
-          else
-            puts "Please enter YES or NO"
-          end
-        else
-          puts "Installation terminated: Could not prompt for license acceptance."
-          puts "If you are performing an unattended installation, you may set"
-          puts "ACCEPT_EULA to Y to indicate your acceptance of the license terms."
-          return false
-        end
-      end
-    end
-    true
-  end
-
   def install
-    return false unless check_eula_acceptance?
-
     ENV["CGO_ENABLED"] = "0"
 
     system "go", "build", *std_go_args(ldflags: "-s -w"), "./cmd/sqlcmd"
