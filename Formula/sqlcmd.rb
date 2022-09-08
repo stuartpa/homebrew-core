@@ -15,7 +15,8 @@ class Sqlcmd < Formula
   end
 
   test do
-    out = shell_output("#{bin}/sqlcmd -?")
-    assert_match "Usage: sqlcmd", out
+    out = shell_output("#{bin}/sqlcmd -S 127.0.0.1 -E -Q 'SELECT @@version'", 1)
+    assert_match "unable to open tcp connection with host '127.0.0.1:1433': " \
+                 "dial tcp 127.0.0.1:1433: connect: connection refused", out
   end
 end
